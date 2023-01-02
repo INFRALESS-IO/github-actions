@@ -49,6 +49,7 @@ runs:
         TELEPORT_BASTION: ${{ inputs.teleport-bastion }}
 
       run: |
+        set -x
 
         # UPDATE ARGOCD APPS DEFINITION WITH THE NEW RELEASE TAG
         # for file in ./devops/argocd/$ENVIRONMENT/*.yaml
