@@ -1,6 +1,6 @@
 name: devops-build
 on:
-- workflow_call:
+  workflow_call:
     inputs:
       aws-region:
         required: true
