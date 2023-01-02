@@ -11,6 +11,12 @@ on:
       clone-k8s-helm-chart-repository-tag:
         required: true
         type: string
+      find-pattern:
+        required: true
+        type: string
+      commit-path:
+        required: true
+        type: string
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,50 +36,75 @@ jobs:
 
     - name: Install AWS CLI
       id: install-aws-cli
-      uses: INFRALESS-IO/github-actions/.github/actions/install-aws-cli@0.0.17
+      uses: INFRALESS-IO/github-actions/.github/actions/install-aws-cli@feature/devops-from-master
 
     - name: Install ARGOCD CLI
       id: install-argocd-cli
-      uses: INFRALESS-IO/github-actions/.github/actions/install-argocd-cli@0.0.17
+      uses: INFRALESS-IO/github-actions/.github/actions/install-argocd-cli@feature/devops-from-master
 
     - name: Install TELEPORT CLI
       id: install-teleport-cli
-      uses: INFRALESS-IO/github-actions/.github/actions/install-teleport-cli@0.0.17
+      uses: INFRALESS-IO/github-actions/.github/actions/install-teleport-cli@feature/devops-from-master
 
     - name: Fetch GitHub Deploy Key
       id: ssm-secret-fetch-github-deploy-key
-      uses: INFRALESS-IO/github-actions/.github/actions/ssm-secret-fetch@0.0.17
+      uses: INFRALESS-IO/github-actions/.github/actions/ssm-secret-fetch@feature/devops-from-master
       with:
         aws-region: "${{ inputs.aws-region }}"
         secret-path: "/common/github/c-k8s-helm-chart/deploy-key"
 
     - name: Fetch ArgoCD Username
       id: ssm-secret-fetch-argocd-username
-      uses: INFRALESS-IO/github-actions/.github/actions/ssm-secret-fetch@0.0.17
+      uses: INFRALESS-IO/github-actions/.github/actions/ssm-secret-fetch@feature/devops-from-master
       with:
         aws-region: "ap-southeast-2"
         secret-path: "/${{steps.select-environment.outputs.environment}}/github/argocd/argocd-username"
 
     - name: Fetch ArgoCD Password
       id: ssm-secret-fetch-argocd-password
-      uses: INFRALESS-IO/github-actions/.github/actions/ssm-secret-fetch@0.0.17
+      uses: INFRALESS-IO/github-actions/.github/actions/ssm-secret-fetch@feature/devops-from-master
       with:
         aws-region: "${{ inputs.aws-region }}"
         secret-path: "/${{steps.select-environment.outputs.environment}}/github/argocd/argocd-password"
 
     - name: Fetch Teleport Key
       id: ssm-secret-fetch-teleport-key
-      uses: INFRALESS-IO/github-actions/.github/actions/ssm-secret-fetch@0.0.17
+      uses: INFRALESS-IO/github-actions/.github/actions/ssm-secret-fetch@feature/devops-from-master
       with:
         aws-region: "${{ inputs.aws-region }}"
         secret-path: "/common/github/teleport/teleport-key"
 
     - name: CLONE K8S HELM CHART
       id: clone-k8s-helm-chart
-      uses: INFRALESS-IO/github-actions/.github/actions/clone-private-repo@0.0.17
+      uses: INFRALESS-IO/github-actions/.github/actions/clone-private-repo@feature/devops-from-master
       with:
         github-deploy-key: "${{steps.ssm-secret-fetch-github-deploy-key.outputs.ssm-secret}}"
         repository: "${{ inputs.clone-k8s-helm-chart-repository }}"
         repository-tag: "${{ inputs.clone-k8s-helm-chart-repository-tag }}"
         clone-path: "./devops/argocd/k8s-helm-chart"
         extra-commands: "rm -r ./devops/argocd/k8s-helm-chart/.git"
+
+    # DEVOPS TEST STEP
+    - name: Check dir
+      run: |
+        pwd
+        ls -lah
+
+    - name: Write Release
+      run: |
+        echo ${{steps.select-environment.outputs.release-tag}} >> release.txt
+
+    - name: UPDATE ARGOCD APPS DEFINITION WITH THE NEW RELEASE TAG
+      id: update-argocd-apps-release-tag
+      uses: INFRALESS-IO/github-actions/.github/actions/sed-files@feature/devops-from-master
+      with:
+        file-path: "./devops/argocd/${{steps.select-environment.outputs.environment}}/*.yaml"
+        find-pattern: "${{ inputs.find-pattern }}"
+        replace-pattern: "${{steps.select-environment.outputs.release-tag}}"
+
+    - name: COMMIT CHANGE AND PRODUCE RELEASE TAG
+      id: commit-and-tag
+      uses: INFRALESS-IO/github-actions/.github/actions/commit-and-tag@feature/devops-from-master
+      with:
+        release-tag: "${{ steps.select-environment.outputs.release-tag }}"
+        commit-path: "${{ inputs.commit-path }}"
