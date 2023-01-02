@@ -1,0 +1,43 @@
+name: devops-deploy
+on:
+  workflow_call:
+    inputs:
+      app-name:
+        required: true
+        type: string
+      argocd-extra-params:
+        required: true
+        type: string
+      teleport-url:
+        required: true
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:        
+    - name: Update ARGOCD Release
+      id: update-argocd-release
+      uses: INFRALESS-IO/github-actions/.github/actions/update-argocd-release@0.0.17
+      with:
+        environment: ${{steps.select-environment.outputs.environment}}
+        release-tag: ${{steps.select-environment.outputs.release-tag}}
+        app-name: "${{ inputs.app-name }}"
+        argocd-username: ${{steps.ssm-secret-fetch-argocd-username.outputs.ssm-secret}}
+        argocd-password: ${{steps.ssm-secret-fetch-argocd-password.outputs.ssm-secret}}
+        argocd-timeout-seconds: "360"
+        argocd-extra-params: "${{ inputs.argocd-extra-params }}"
+        teleport-key: ${{steps.ssm-secret-fetch-teleport-key.outputs.ssm-secret}}
+        teleport-url: "${{ inputs.teleport-url }}"
+        teleport-bastion: bastion-${{steps.select-environment.outputs.environment}}
+
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{steps.select-environment.outputs.release-tag}}
+        release_name: Release ${{steps.select-environment.outputs.release-tag}}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        draft: false
+        generate_release_notes: true

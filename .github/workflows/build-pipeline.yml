@@ -17,6 +17,9 @@ on:
       commit-path:
         required: true
         type: string
+      app-image-name:
+        required: true
+        type: string
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -84,12 +87,6 @@ jobs:
         clone-path: "./devops/argocd/k8s-helm-chart"
         extra-commands: "rm -r ./devops/argocd/k8s-helm-chart/.git"
 
-    # DEVOPS TEST STEP
-    - name: Check dir
-      run: |
-        pwd
-        ls -lah
-
     - name: Write Release
       run: |
         echo ${{steps.select-environment.outputs.release-tag}} >> release.txt
@@ -102,9 +99,24 @@ jobs:
         find-pattern: "${{ inputs.find-pattern }}"
         replace-pattern: "${{steps.select-environment.outputs.release-tag}}"
 
-    - name: COMMIT CHANGE AND PRODUCE RELEASE TAG
-      id: commit-and-tag
-      uses: INFRALESS-IO/github-actions/.github/actions/commit-and-tag@feature/devops-from-master
-      with:
-        release-tag: "${{ steps.select-environment.outputs.release-tag }}"
-        commit-path: "${{ inputs.commit-path }}"
+    # - name: COMMIT CHANGE AND PRODUCE RELEASE TAG
+    #   id: commit-and-tag
+    #   uses: INFRALESS-IO/github-actions/.github/actions/commit-and-tag@feature/devops-from-master
+    #   with:
+    #     release-tag: "${{ steps.select-environment.outputs.release-tag }}"
+    #     commit-path: "${{ inputs.commit-path }}"
+
+    - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build and Push to ECR
+      env:
+        APP_IMAGE_NAME: 498179384503.dkr.ecr.ap-southeast-2.amazonaws.com/${{ inputs.app-image-name }}
+      run: |
+        export APP_IMAGE_FPM=${APP_IMAGE_NAME}:fpm-${{steps.select-environment.outputs.release-tag}}
+        export APP_IMAGE_NGINX=${APP_IMAGE_NAME}:nginx-${{steps.select-environment.outputs.release-tag}}
+        docker build -t $APP_IMAGE_FPM -f Dockerfile .
+        docker build -t $APP_IMAGE_NGINX -f Dockerfile-nginx .
+        docker push $APP_IMAGE_FPM
+        docker push $APP_IMAGE_NGINX
