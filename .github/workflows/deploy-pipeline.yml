@@ -30,7 +30,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:        
+    steps:
+    - name: Install ARGOCD CLI
+      id: install-argocd-cli
+      uses: INFRALESS-IO/github-actions/.github/actions/install-argocd-cli@feature/devops-from-master
+
     - name: Update ARGOCD Release
       id: update-argocd-release
       uses: INFRALESS-IO/github-actions/.github/actions/update-argocd-release@0.0.17
