@@ -37,7 +37,7 @@ jobs:
 
     - name: Update ARGOCD Release
       id: update-argocd-release
-      uses: INFRALESS-IO/github-actions/.github/actions/update-argocd-release@0.0.17
+      uses: INFRALESS-IO/github-actions/.github/actions/update-argocd-release@feature/devops-from-master
       with:
         environment: "${{ inputs.environment }}"
         release-tag: "${{ inputs.release-tag }}"
