@@ -20,6 +20,12 @@ on:
       app-image-name:
         required: true
         type: string
+    outputs:
+      environment:
+        value: ${{ jobs.select-environment.outputs.environment }}
+      release-tag:
+        value: ${{ jobs.select-environment.outputs.release-tag }}
+        
 jobs:
   build:
     runs-on: ubuntu-latest
