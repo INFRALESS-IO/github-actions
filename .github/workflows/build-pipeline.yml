@@ -26,9 +26,9 @@ on:
       release-tag:
         value: ${{ jobs.build.outputs.release-tag }}
       argocd-username:
-        value: ${{ jobs.build.outputs.ssm-secret }}
+        value: ${{ jobs.build.outputs.argocd-username }}
       argocd-password:
-        value: ${{ jobs.build.outputs.ssm-secret }}
+        value: ${{ jobs.build.outputs.argocd-password }}
       teleport-key:
         value: ${{ jobs.build.outputs.teleport-key }}
 
@@ -38,8 +38,8 @@ jobs:
     outputs:
       environment: ${{ steps.select-environment.outputs.environment }}
       release-tag: ${{ steps.select-environment.outputs.release-tag }}
-      ssm-secret: ${{ steps.ssm-secret-fetch-argocd-username.outputs.ssm-secret }}
-      ssm-secret: ${{ steps.ssm-secret-fetch-argocd-password.outputs.ssm-secret }}
+      argocd-username: ${{ steps.ssm-secret-fetch-argocd-username.outputs.ssm-secret }}
+      argocd-password: ${{ steps.ssm-secret-fetch-argocd-password.outputs.ssm-secret }}
       teleport-key: $${{ steps.ssm-secret-fetch-teleport-key.outputs.ssm-secret }}
     steps:
     - uses: actions/checkout@v3
