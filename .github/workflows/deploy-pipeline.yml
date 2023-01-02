@@ -17,6 +17,15 @@ on:
       release-tag:
         required: true
         type: string
+      argocd-username:
+        required: true
+        type: string
+      argocd-password:
+        required: true
+        type: string
+      teleport-key:
+        required: true
+        type: string
         
 jobs:
   build:
@@ -26,16 +35,16 @@ jobs:
       id: update-argocd-release
       uses: INFRALESS-IO/github-actions/.github/actions/update-argocd-release@0.0.17
       with:
-        environment: ${{steps.select-environment.outputs.environment}}
-        release-tag: ${{steps.select-environment.outputs.release-tag}}
+        environment: "${{ inputs.environment }}"
+        release-tag: "${{ inputs.release-tag }}"
         app-name: "${{ inputs.app-name }}"
-        argocd-username: ${{steps.ssm-secret-fetch-argocd-username.outputs.ssm-secret}}
-        argocd-password: ${{steps.ssm-secret-fetch-argocd-password.outputs.ssm-secret}}
+        argocd-username: "${{ inputs.argocd-username }}"
+        argocd-password: "${{ inputs.argocd-password }}"
         argocd-timeout-seconds: "360"
         argocd-extra-params: "${{ inputs.argocd-extra-params }}"
-        teleport-key: ${{steps.ssm-secret-fetch-teleport-key.outputs.ssm-secret}}
+        teleport-key: ${{ inputs.teleport-key }}
         teleport-url: "${{ inputs.teleport-url }}"
-        teleport-bastion: bastion-${{steps.select-environment.outputs.environment}}
+        teleport-bastion: bastion-${{ inputs.environment }}
 
     - name: Create Release
       id: create_release
