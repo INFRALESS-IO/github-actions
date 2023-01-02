@@ -37,6 +37,7 @@ runs:
         export REGEX_PROD='^[0-9]+\.[0-9]+\.[0-9]+$'
         export REGEX_STG='^[0-9]+\.[0-9]+\.[0-9]+-stg\w+$'
         export REGEX_DEV='^[0-9]+\.[0-9]+\.[0-9]+-dev\w+$'
+        export REGEX_DEVOPS='^feature/devops'
 
         if [[ ${GITHUB_REF_NAME} =~ $REGEX_PROD ]]; then
             echo "PROD TAGS"
@@ -45,6 +46,9 @@ runs:
             echo "STG TAGS"
             ENVIRONMENT="staging"
         elif [[ ${GITHUB_REF_NAME} =~ $REGEX_DEV ]]; then
+            echo "DEV TAGS"
+            ENVIRONMENT="dev"
+        elif [[ ${GITHUB_REF_NAME} =~ $REGEX_DEVOPS ]]; then
             echo "DEV TAGS"
             ENVIRONMENT="dev"
         else

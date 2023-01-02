@@ -1,4 +1,4 @@
-name: devops-tests
+name: devops-build
 on:
 - workflow_call
 jobs:
