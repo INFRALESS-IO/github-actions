@@ -61,10 +61,17 @@ runs:
         # done
 
         # EXPORT TELEPORT KEY VARIABLE TO A FILE
-        echo "$TELEPORT_KEY" > teleport-key.pem
+        echo "${TELEPORT_KEY}" > teleport-key.pem
 
         # ECHO TO DEBUG
+        echo "# ========= DEVOPS DEBUG =========== #"
         cat teleport-key.pem
+        echo "# ========= DEVOPS DEBUG =========== #"
+        echo ${TELEPORT_KEY}
+        echo "# ========= DEVOPS DEBUG =========== #"
+        echo ${ENVIRONMENT}
+        echo "# ========= DEVOPS DEBUG =========== #"
+        echo ${ARGOCD_USERNAME}
 
         # CREATES A TUNNEL TO TELEPORT AND KEEP SESSION ACTIVE WITH A LOOP
         nohup tsh ssh -L 8444:argo-cd-argocd-server.argocd.svc.cluster.local:443 --proxy=$TELEPORT_URL -i teleport-key.pem root@$TELEPORT_BASTION "while sleep 1; do echo waiting; done" & sleep 10
