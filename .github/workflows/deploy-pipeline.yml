@@ -35,6 +35,10 @@ jobs:
       id: install-argocd-cli
       uses: INFRALESS-IO/github-actions/.github/actions/install-argocd-cli@feature/devops-from-master
 
+    - name: Install TELEPORT CLI
+      id: install-teleport-cli
+      uses: INFRALESS-IO/github-actions/.github/actions/install-teleport-cli@feature/devops-from-master
+
     - name: Update ARGOCD Release
       id: update-argocd-release
       uses: INFRALESS-IO/github-actions/.github/actions/update-argocd-release@feature/devops-from-master
