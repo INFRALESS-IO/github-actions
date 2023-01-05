@@ -5,10 +5,10 @@ on:
       aws-region:
         required: true
         type: string
-      commit-path:
+      app-image-name:
         required: true
         type: string
-      app-image-name:
+      commit-path:
         required: true
         type: string
     outputs:
