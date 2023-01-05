@@ -113,14 +113,6 @@ jobs:
         find-pattern: "${{ inputs.find-pattern }}"
         replace-pattern: "${{steps.select-environment.outputs.release-tag}}"
 
-    - name: CHECK IF APP FILES EXIST
-      run: |
-        pwd
-        ls -la
-        ls -la ./devops/argocd/dev/
-        cat ./devops/argocd/dev/c-bcm-test.yaml
-        cat ./devops/argocd/dev/c-bcm-test-devops.yaml
-
     - name: COMMIT CHANGE AND PRODUCE RELEASE TAG
       id: commit-and-tag
       uses: INFRALESS-IO/github-actions/.github/actions/commit-and-tag@feature/devops-from-master
@@ -142,3 +134,12 @@ jobs:
         docker build -t $APP_IMAGE_NGINX -f Dockerfile-nginx .
         docker push $APP_IMAGE_FPM
         docker push $APP_IMAGE_NGINX
+
+    - name: CHECK IF APP FILES EXIST
+      run: |
+        set -x
+        pwd
+        ls -la
+        ls -la ./devops/argocd/dev/
+        cat ./devops/argocd/dev/c-bcm-test.yaml
+        cat ./devops/argocd/dev/c-bcm-test-devops.yaml
