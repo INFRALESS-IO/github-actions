@@ -40,7 +40,7 @@ jobs:
       release-tag: ${{ steps.select-environment.outputs.release-tag }}
       argocd-username: ${{ steps.ssm-secret-fetch-argocd-username.outputs.ssm-secret }}
       argocd-password: ${{ steps.ssm-secret-fetch-argocd-password.outputs.ssm-secret }}
-      teleport-key: $${{ steps.ssm-secret-fetch-teleport-key.outputs.ssm-secret }}
+      teleport-key: ${{ steps.ssm-secret-fetch-teleport-key.outputs.ssm-secret }}
     steps:
     - uses: actions/checkout@v3
 
