@@ -73,6 +73,9 @@ runs:
         #argocd app set $APP_NAME --revision $RELEASE_TAG && sleep 5
 
         # INSTALL APP IF DOESN"T EXIST
+        pwd
+        ls -la
+        ls -la ./devops/argocd/$ENVIRONMENT/
         argocd app create $APP_NAME --file ./devops/argocd/$ENVIRONMENT/$APP_NAME.yaml --upsert
 
         # SET NEW RELEASE TAG
