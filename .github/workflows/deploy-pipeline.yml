@@ -38,6 +38,9 @@ on:
       aws-region:
         required: true
         type: string
+      commit-path:
+        required: true
+        type: string
         
 jobs:
   build:

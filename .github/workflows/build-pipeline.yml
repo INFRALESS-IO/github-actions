@@ -8,9 +8,6 @@ on:
       app-image-name:
         required: true
         type: string
-      commit-path:
-        required: true
-        type: string
     outputs:
       environment:
         value: ${{ jobs.build.outputs.environment }}
