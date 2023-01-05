@@ -91,35 +91,6 @@ jobs:
         aws-region: "${{ inputs.aws-region }}"
         secret-path: "/common/github/teleport/teleport-key"
 
-    - name: CLONE K8S HELM CHART
-      id: clone-k8s-helm-chart
-      uses: INFRALESS-IO/github-actions/.github/actions/clone-private-repo@feature/devops-from-master
-      with:
-        github-deploy-key: "${{steps.ssm-secret-fetch-github-deploy-key.outputs.ssm-secret}}"
-        repository: "${{ inputs.clone-k8s-helm-chart-repository }}"
-        repository-tag: "${{ inputs.clone-k8s-helm-chart-repository-tag }}"
-        clone-path: "./devops/argocd/k8s-helm-chart"
-        extra-commands: "rm -r ./devops/argocd/k8s-helm-chart/.git"
-
-    - name: Write Release
-      run: |
-        echo ${{steps.select-environment.outputs.release-tag}} >> release.txt
-
-    - name: UPDATE ARGOCD APPS DEFINITION WITH THE NEW RELEASE TAG
-      id: update-argocd-apps-release-tag
-      uses: INFRALESS-IO/github-actions/.github/actions/sed-files@feature/devops-from-master
-      with:
-        file-path: "./devops/argocd/${{steps.select-environment.outputs.environment}}/*.yaml"
-        find-pattern: "${{ inputs.find-pattern }}"
-        replace-pattern: "${{steps.select-environment.outputs.release-tag}}"
-
-    - name: COMMIT CHANGE AND PRODUCE RELEASE TAG
-      id: commit-and-tag
-      uses: INFRALESS-IO/github-actions/.github/actions/commit-and-tag@feature/devops-from-master
-      with:
-        release-tag: "${{ steps.select-environment.outputs.release-tag }}"
-        commit-path: "${{ inputs.commit-path }}"
-
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
@@ -134,12 +105,3 @@ jobs:
         docker build -t $APP_IMAGE_NGINX -f Dockerfile-nginx .
         docker push $APP_IMAGE_FPM
         docker push $APP_IMAGE_NGINX
-
-    - name: CHECK IF APP FILES EXIST
-      run: |
-        set -x
-        pwd
-        ls -la
-        ls -la ./devops/argocd/dev/
-        cat ./devops/argocd/dev/c-bcm-test.yaml
-        cat ./devops/argocd/dev/c-bcm-test-devops.yaml

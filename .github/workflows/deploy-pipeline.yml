@@ -32,14 +32,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: CHECK IF APP FILES EXIST
+
+    - name: CLONE K8S HELM CHART
+      id: clone-k8s-helm-chart
+      uses: INFRALESS-IO/github-actions/.github/actions/clone-private-repo@feature/devops-from-master
+      with:
+        github-deploy-key: "${{steps.ssm-secret-fetch-github-deploy-key.outputs.ssm-secret}}"
+        repository: "${{ inputs.clone-k8s-helm-chart-repository }}"
+        repository-tag: "${{ inputs.clone-k8s-helm-chart-repository-tag }}"
+        clone-path: "./devops/argocd/k8s-helm-chart"
+        extra-commands: "rm -r ./devops/argocd/k8s-helm-chart/.git"
+
+    - name: Write Release
       run: |
-        set -x
-        pwd
-        ls -la
-        ls -la ./devops/argocd/dev/
-        cat ./devops/argocd/dev/c-bcm-test.yaml
-        cat ./devops/argocd/dev/c-bcm-test-devops.yaml
+        echo ${{steps.select-environment.outputs.release-tag}} >> release.txt
+
+    - name: UPDATE ARGOCD APPS DEFINITION WITH THE NEW RELEASE TAG
+      id: update-argocd-apps-release-tag
+      uses: INFRALESS-IO/github-actions/.github/actions/sed-files@feature/devops-from-master
+      with:
+        file-path: "./devops/argocd/${{steps.select-environment.outputs.environment}}/*.yaml"
+        find-pattern: "${{ inputs.find-pattern }}"
+        replace-pattern: "${{steps.select-environment.outputs.release-tag}}"
+
+    - name: COMMIT CHANGE AND PRODUCE RELEASE TAG
+      id: commit-and-tag
+      uses: INFRALESS-IO/github-actions/.github/actions/commit-and-tag@feature/devops-from-master
+      with:
+        release-tag: "${{ steps.select-environment.outputs.release-tag }}"
+        commit-path: "${{ inputs.commit-path }}"
 
     - name: Install ARGOCD CLI
       id: install-argocd-cli
@@ -48,6 +69,15 @@ jobs:
     - name: Install TELEPORT CLI
       id: install-teleport-cli
       uses: INFRALESS-IO/github-actions/.github/actions/install-teleport-cli@feature/devops-from-master
+        
+    - name: CHECK IF APP FILES EXIST
+      run: |
+        set -x
+        pwd
+        ls -la
+        ls -la ./devops/argocd/dev/
+        cat ./devops/argocd/dev/c-bcm-test.yaml
+        cat ./devops/argocd/dev/c-bcm-test-devops.yaml
 
     - name: Update ARGOCD Release
       id: update-argocd-release
