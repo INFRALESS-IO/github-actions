@@ -113,12 +113,20 @@ jobs:
         find-pattern: "${{ inputs.find-pattern }}"
         replace-pattern: "${{steps.select-environment.outputs.release-tag}}"
 
-    # - name: COMMIT CHANGE AND PRODUCE RELEASE TAG
-    #   id: commit-and-tag
-    #   uses: INFRALESS-IO/github-actions/.github/actions/commit-and-tag@feature/devops-from-master
-    #   with:
-    #     release-tag: "${{ steps.select-environment.outputs.release-tag }}"
-    #     commit-path: "${{ inputs.commit-path }}"
+    - name: CHECK IF APP FILES EXIST
+      run: |
+        pwd
+        ls -la
+        ls -la ./devops/argocd/dev/
+        cat ./devops/argocd/dev/c-bcm-test.yaml
+        cat ./devops/argocd/dev/c-bcm-test-devops.yaml
+
+    - name: COMMIT CHANGE AND PRODUCE RELEASE TAG
+      id: commit-and-tag
+      uses: INFRALESS-IO/github-actions/.github/actions/commit-and-tag@feature/devops-from-master
+      with:
+        release-tag: "${{ steps.select-environment.outputs.release-tag }}"
+        commit-path: "${{ inputs.commit-path }}"
 
     - name: Login to Amazon ECR
       id: login-ecr
