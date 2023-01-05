@@ -17,15 +17,6 @@ on:
       release-tag:
         required: true
         type: string
-      # argocd-username:
-      #   required: true
-      #   type: string
-      # argocd-password:
-      #   required: true
-      #   type: string
-      # teleport-key:
-      #   required: true
-      #   type: string
       clone-k8s-helm-chart-repository:
         required: true
         type: string
@@ -51,7 +42,7 @@ jobs:
     - name: Assume InfraDeployGitHub
       uses: aws-actions/configure-aws-credentials@master
       with:
-        aws-region: ap-southeast-2
+        aws-region: "${{ inputs.aws-region }}"
         role-to-assume: arn:aws:iam::498179384503:role/CIDeployGitHub
         role-duration-seconds: 1800
 
@@ -59,7 +50,7 @@ jobs:
       id: ssm-secret-fetch-argocd-username
       uses: INFRALESS-IO/github-actions/.github/actions/ssm-secret-fetch@feature/devops-from-master
       with:
-        aws-region: "ap-southeast-2"
+        aws-region: "${{ inputs.aws-region }}"
         secret-path: "/${{ inputs.environment }}/github/argocd/argocd-username"
 
     - name: Fetch ArgoCD Password
@@ -119,15 +110,6 @@ jobs:
     - name: Install TELEPORT CLI
       id: install-teleport-cli
       uses: INFRALESS-IO/github-actions/.github/actions/install-teleport-cli@feature/devops-from-master
-        
-    - name: CHECK IF APP FILES EXIST
-      run: |
-        set -x
-        pwd
-        ls -la
-        ls -la ./devops/argocd/dev/
-        cat ./devops/argocd/dev/c-bcm-test-devops.yaml
-        cat ./devops/argocd/dev/c-bcm-test.yaml
 
     - name: Update ARGOCD Release
       id: update-argocd-release

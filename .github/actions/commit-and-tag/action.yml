@@ -19,7 +19,6 @@ runs:
         RELEASE_TAG: ${{ inputs.release-tag }}
         COMMIT_PATH: ${{ inputs.commit-path }}
       run: |
-        set -x
         git config --global user.email "bot@deploy.com"
         git config --global user.name "Bot"
         git add $COMMIT_PATH
