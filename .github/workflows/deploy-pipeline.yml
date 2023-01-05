@@ -42,19 +42,26 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Assume InfraDeployGitHub
+      uses: aws-actions/configure-aws-credentials@master
+      with:
+        aws-region: ap-southeast-2
+        role-to-assume: arn:aws:iam::498179384503:role/CIDeployGitHub
+        role-duration-seconds: 1800
+
     - name: Fetch ArgoCD Username
       id: ssm-secret-fetch-argocd-username
       uses: INFRALESS-IO/github-actions/.github/actions/ssm-secret-fetch@feature/devops-from-master
       with:
         aws-region: "ap-southeast-2"
-        secret-path: "/${{steps.select-environment.outputs.environment}}/github/argocd/argocd-username"
+        secret-path: "/${{ inputs.environment }}/github/argocd/argocd-username"
 
     - name: Fetch ArgoCD Password
       id: ssm-secret-fetch-argocd-password
       uses: INFRALESS-IO/github-actions/.github/actions/ssm-secret-fetch@feature/devops-from-master
       with:
         aws-region: "${{ inputs.aws-region }}"
-        secret-path: "/${{steps.select-environment.outputs.environment}}/github/argocd/argocd-password"
+        secret-path: "/${{ inputs.environment }}/github/argocd/argocd-password"
 
     - name: Fetch Teleport Key
       id: ssm-secret-fetch-teleport-key
@@ -88,7 +95,7 @@ jobs:
       id: update-argocd-apps-release-tag
       uses: INFRALESS-IO/github-actions/.github/actions/sed-files@feature/devops-from-master
       with:
-        file-path: "./devops/argocd/${{steps.select-environment.outputs.environment}}/*.yaml"
+        file-path: "./devops/argocd/${{ inputs.environment }}/*.yaml"
         find-pattern: "${{ inputs.find-pattern }}"
         replace-pattern: "${{ inputs.release-tag }}"
 
