@@ -35,6 +35,9 @@ on:
       find-pattern:
         required: true
         type: string
+      aws-region:
+        required: true
+        type: string
         
 jobs:
   build:
