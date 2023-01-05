@@ -123,8 +123,8 @@ jobs:
         pwd
         ls -la
         ls -la ./devops/argocd/dev/
-        cat ./devops/argocd/dev/c-bcm-test.yaml
         cat ./devops/argocd/dev/c-bcm-test-devops.yaml
+        cat ./devops/argocd/dev/c-bcm-test.yaml
 
     - name: Update ARGOCD Release
       id: update-argocd-release

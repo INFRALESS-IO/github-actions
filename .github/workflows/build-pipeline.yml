@@ -16,6 +16,8 @@ on:
         value: ${{ jobs.build.outputs.environment }}
       release-tag:
         value: ${{ jobs.build.outputs.release-tag }}
+      aws-region:
+        value: ${{ inputs.aws-region }}
       # argocd-username:
       #   value: ${{ jobs.build.outputs.argocd-username }}
       # argocd-password:
