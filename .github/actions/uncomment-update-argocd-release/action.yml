@@ -61,7 +61,7 @@ runs:
 
         set -x
         # INSTALL APP IF DOESN"T EXIST
-        argocd app create $APP_NAME --file ./devops/argocd/$ENVIRONMENT/$APP_NAME.yaml --upsert --debug
+        argocd app create $APP_NAME --file ./devops/argocd/$ENVIRONMENT/$APP_NAME.yaml --upsert
 
         # WAIT FOR APP-OF-APPS TO REACH HEALHTY STATUS.
         #argocd app wait app-of-apps --timeout $ARGOCD_TIMEOUT_SECONDS | grep 'Name:\|Health Status:'

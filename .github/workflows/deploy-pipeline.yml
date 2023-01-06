@@ -111,6 +111,11 @@ jobs:
       id: install-teleport-cli
       uses: INFRALESS-IO/github-actions/.github/actions/install-teleport-cli@feature/devops-from-master
 
+    - name: Check helm values file
+      run: |
+        ls -la ./devops/argocd/k8s-helm-chart
+        cat ./devops/argocd/k8s-helm-chart/values.yaml
+
     - name: Update ARGOCD Release
       id: update-argocd-release
       uses: INFRALESS-IO/github-actions/.github/actions/uncomment-update-argocd-release@feature/devops-from-master
