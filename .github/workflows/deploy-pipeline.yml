@@ -96,12 +96,12 @@ jobs:
         find-pattern: "${{ inputs.find-pattern }}"
         replace-pattern: "${{ inputs.release-tag }}"
 
-    # - name: COMMIT CHANGE AND PRODUCE RELEASE TAG
-    #   id: commit-and-tag
-    #   uses: INFRALESS-IO/github-actions/.github/actions/commit-and-tag@feature/devops-from-master
-    #   with:
-    #     release-tag: "${{ inputs.release-tag }}"
-    #     commit-path: "${{ inputs.commit-path }}"
+    - name: COMMIT CHANGE AND PRODUCE RELEASE TAG
+      id: commit-and-tag
+      uses: INFRALESS-IO/github-actions/.github/actions/commit-and-tag@feature/devops-from-master
+      with:
+        release-tag: "${{ inputs.release-tag }}"
+        commit-path: "${{ inputs.commit-path }}"
 
     - name: Install ARGOCD CLI
       id: install-argocd-cli
