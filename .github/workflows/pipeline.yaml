@@ -50,10 +50,10 @@ jobs:
         # MASKS AND EXPORT CREDENTIALS
         # echo "ssm-secret=$SSM_SECRET" >> $GITHUB_OUTPUT
 
-    - name: Retrieve SSM Secret
+    - name: Show SSM Secret
       shell: bash
       run: |
         touch temp
-        echo ${{steps.ssm-retrieve.outputs.ssm-secret}} > temp
+        echo "${{steps.ssm-retrieve.outputs.ssm-secret}}" > temp
         cat temp
   
