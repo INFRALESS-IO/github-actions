@@ -1,0 +1,43 @@
+name: Build
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "*"
+permissions: write-all
+jobs:
+  test-ssm-fetch:
+    - uses: actions/checkout@v3
+
+    - name: Assume InfraDeployGitHub
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-region: 'us-west-1'
+        # An IAM role with permission to run CDK against all environments, found in our AWS Account "Common"
+        role-to-assume: arn:aws:iam::874302534186:role/CIDeployGitHub
+        role-duration-seconds: 1800
+      
+    - name: Retrieve SSM Secret
+      shell: bash
+      id: ssm-retrieve
+      env:
+        AWS_REGION: 'us-west-1'
+        SECRET_PATH: '/common/github/teleport/teleport-key'
+      run: |
+
+        # FETCH SSM SECRET
+        SSM_SECRET=$(aws ssm get-parameter --name $SECRET_PATH --query "Parameter.Value" --output text --with-decryption --region $AWS_REGION)
+
+        cat SSM_SECRET
+
+        # RESOLVE MULTILINE ISSUE DESCRIBED HERE https://github.community/t/set-output-truncates-multiline-strings/16852/5
+        SSM_SECRET="${SSM_SECRET//'%'/'%25'}"
+        cat SSM_SECRET
+        SSM_SECRET="${SSM_SECRET//$'\n'/'%0A'}"
+        cat SSM_SECRET
+        SSM_SECRET="${SSM_SECRET//$'\r'/'%0D'}"
+        cat SSM_SECRET
+
+        # MASKS AND EXPORT CREDENTIALS
+        echo "ssm-secret=$SSM_SECRET" >> $GITHUB_OUTPUT
+  
