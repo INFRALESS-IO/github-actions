@@ -35,12 +35,12 @@ jobs:
         echo $SSM_SECRET
 
         # RESOLVE MULTILINE ISSUE DESCRIBED HERE https://github.community/t/set-output-truncates-multiline-strings/16852/5
-        SSM_SECRET="${SSM_SECRET//'%'/'%25'}"
-        echo $SSM_SECRET
-        SSM_SECRET="${SSM_SECRET//$'\n'/'%0A'}"
-        echo $SSM_SECRET
-        SSM_SECRET="${SSM_SECRET//$'\r'/'%0D'}"
-        echo $SSM_SECRET
+        # SSM_SECRET="${SSM_SECRET//'%'/'%25'}"
+        # echo $SSM_SECRET
+        # SSM_SECRET="${SSM_SECRET//$'\n'/'%0A'}"
+        # echo $SSM_SECRET
+        # SSM_SECRET="${SSM_SECRET//$'\r'/'%0D'}"
+        # echo $SSM_SECRET
 
         # MASKS AND EXPORT CREDENTIALS
         echo "ssm-secret=$SSM_SECRET" >> $GITHUB_OUTPUT
