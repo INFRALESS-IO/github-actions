@@ -65,7 +65,7 @@ jobs:
         echo "$SSM_SECRET" >> "${GITHUB_OUTPUT}"
         echo "${delimiter}" >> "${GITHUB_OUTPUT}"
 
-    - name: Show SSM Multiline Secret
+    - name: Show SSM Single Secret
       shell: bash
       run: |
         touch temp
