@@ -36,7 +36,7 @@ jobs:
 
         delimiter="$(openssl rand -hex 8)"
         echo "ssm-secret<<${delimiter}" >> "${GITHUB_OUTPUT}"
-        echo "ssm-secret=$SSM_SECRET" >> "${GITHUB_OUTPUT}"
+        echo "$SSM_SECRET" >> "${GITHUB_OUTPUT}"
         echo "${delimiter}" >> "${GITHUB_OUTPUT}"
 
         # RESOLVE MULTILINE ISSUE DESCRIBED HERE https://github.community/t/set-output-truncates-multiline-strings/16852/5
