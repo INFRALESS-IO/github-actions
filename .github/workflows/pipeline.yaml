@@ -53,6 +53,7 @@ jobs:
     - name: Retrieve SSM Secret
       shell: bash
       run: |
-        
-        echo ${{steps.ssm-retrieve.outputs.ssm-secret}}
+        touch temp
+        echo ${{steps.ssm-retrieve.outputs.ssm-secret}} > temp
+        cat temp
   
